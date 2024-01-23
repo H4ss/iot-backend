@@ -56,4 +56,35 @@ router.get('/users', async (req, res) => {
     res.status(200).send(users);
 });
 
+// PUT: Update a user's username
+router.put('/update-username/:oldUsername', async (req, res) => {
+    const oldUsername = req.params.oldUsername;
+    const { newUsername } = req.body;
+  
+    if (!newUsername) {
+      return res.status(400).send('New username is required');
+    }
+  
+    const oldUserRef = db.collection('users').doc(oldUsername);
+    const newUserRef = db.collection('users').doc(newUsername);
+  
+    const newDoc = await newUserRef.get();
+    if (newDoc.exists) {
+      return res.status(409).send('New username already exists');
+    }
+  
+    const oldDoc = await oldUserRef.get();
+    if (!oldDoc.exists) {
+      return res.status(404).send('Old user not found');
+    }
+  
+    const userData = oldDoc.data();
+    userData.username = newUsername; // Update the username field in the document
+  
+    await newUserRef.set(userData);
+    await oldUserRef.delete();
+  
+    res.status(200).send(`Username updated from ${oldUsername} to ${newUsername}`);
+  });  
+
 export default router;
