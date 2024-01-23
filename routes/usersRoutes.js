@@ -85,6 +85,100 @@ router.put('/update-username/:oldUsername', async (req, res) => {
     await oldUserRef.delete();
   
     res.status(200).send(`Username updated from ${oldUsername} to ${newUsername}`);
-  });  
+});
+
+// PUT: Update a user's password
+router.put('/update-password/:username', async (req, res) => {
+    const username = req.params.username;
+    const { oldPassword, newPassword } = req.body;
+  
+    if (!oldPassword || !newPassword) {
+      return res.status(400).send('Old and new passwords are required');
+    }
+  
+    // TODO: Add password strength validation for newPassword here
+
+    const userRef = db.collection('users').doc(username);
+    const doc = await userRef.get();
+  
+    if (!doc.exists) {
+      return res.status(404).send('User not found');
+    }
+  
+    const user = doc.data();
+    if (user.password !== oldPassword) { // This is a simple check; we might need to do it hashed
+      return res.status(401).send('Old password is incorrect');
+    }
+  
+    await userRef.update({ password: newPassword });
+    res.status(200).send(`Password updated for user: ${username}`);
+});
+
+// PUT: Add a captor to a user's captors map
+router.put('/add-captor/:username', async (req, res) => {
+    const username = req.params.username;
+    const { captorName, captorValue } = req.body;
+  
+    if (!captorName) {
+      return res.status(400).send('Captor name is required');
+    }
+  
+    const userRef = db.collection('users').doc(username);
+    const doc = await userRef.get();
+  
+    if (!doc.exists) {
+      return res.status(404).send('User not found');
+    }
+  
+    // Update the captors map
+    const userCaptors = doc.data().captors || {};
+    userCaptors[captorName] = captorValue;
+  
+    await userRef.update({ captors: userCaptors });
+    res.status(200).send(`Captor '${captorName}' added/updated for user: ${username}`);
+});
+
+// DELETE: Remove a captor from a user's captors map
+router.delete('/delete-captor/:username', async (req, res) => {
+    const username = req.params.username;
+    const { captorName } = req.body;
+  
+    if (!captorName) {
+      return res.status(400).send('Captor name is required');
+    }
+  
+    const userRef = db.collection('users').doc(username);
+    const doc = await userRef.get();
+  
+    if (!doc.exists) {
+      return res.status(404).send('User not found');
+    }
+  
+    // Remove the captor from the map
+    const userCaptors = doc.data().captors || {};
+    if (userCaptors.hasOwnProperty(captorName)) {
+      delete userCaptors[captorName];
+      await userRef.update({ captors: userCaptors });
+      res.status(200).send(`Captor '${captorName}' removed from user: ${username}`);
+    } else {
+      res.status(404).send(`Captor '${captorName}' not found for user: ${username}`);
+    }
+});
+
+// DELETE: Delete a user account
+router.delete('/delete-user/:username', async (req, res) => {
+    const username = req.params.username;
+  
+    const userRef = db.collection('users').doc(username);
+    const doc = await userRef.get();
+  
+    if (!doc.exists) {
+      return res.status(404).send('User not found');
+    }
+  
+    await userRef.delete();
+    res.status(200).send(`User account '${username}' has been deleted`);
+});
+  
 
 export default router;
