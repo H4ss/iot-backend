@@ -1,5 +1,5 @@
 import express from 'express';
-import admin from '../firebaseAdmin.js'; // Adjust the path
+import admin from '../firebaseAdmin.js';
 
 const router = express.Router();
 const db = admin.firestore();
@@ -28,6 +28,32 @@ router.post('/create-user', async (req, res) => {
 
   await userRef.set(userData);
   res.status(201).send(`User created with username: ${username}`);
+});
+
+// GET: Retrieve a user by username
+router.get('/find/:username', async (req, res) => {
+    const username = req.params.username;
+    const userRef = db.collection('users').doc(username);
+    const doc = await userRef.get();
+  
+    if (!doc.exists) {
+      res.status(404).send('User not found');
+    } else {
+      res.status(200).send(doc.data());
+    }
+});
+
+// GET: Retrieve all users
+router.get('/users', async (req, res) => {
+    const usersRef = db.collection('users');
+    const snapshot = await usersRef.get();
+  
+    const users = [];
+    snapshot.forEach(doc => {
+      users.push({ id: doc.id, ...doc.data() });
+    });
+  
+    res.status(200).send(users);
 });
 
 export default router;
