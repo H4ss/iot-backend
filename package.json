@@ -1,0 +1,31 @@
+{
+  "name": "iot-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/H4ss/iot-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/H4ss/iot-backend/issues"
+  },
+  "homepage": "https://github.com/H4ss/iot-backend#readme",
+  "dependencies": {
+    "dotenv": "^16.3.2",
+    "express": "^4.18.2",
+    "firebase": "^10.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
