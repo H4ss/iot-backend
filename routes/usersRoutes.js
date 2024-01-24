@@ -1,4 +1,5 @@
 import express from 'express';
+import axios from 'axios';
 import admin from '../firebaseAdmin.js';
 
 const router = express.Router();
@@ -132,10 +133,38 @@ router.put('/add-captor/:username', async (req, res) => {
   
     // Update the captors map
     const userCaptors = doc.data().captors || {};
-    userCaptors[captorName] = captorValue;
+    userCaptors[captorName] = 0;
   
     await userRef.update({ captors: userCaptors });
     res.status(200).send(`Captor '${captorName}' added/updated for user: ${username}`);
+});
+
+// PUT: Update selected captors
+router.put('/update-captor/:username/:captor', async (req, res) => {
+    const username = req.params.username;
+    const captor = req.params.captor;
+
+    // get request to /captors_info to retrieve the json, then parse it by the captor name
+    let result = await axios.get("http://localhost:4000/captors_info").then((response) => { return response.data; });
+    const { captorValue } = result[captor];
+  
+    if (!captor) {
+      return res.status(400).send('Captor name is required');
+    }
+  
+    const userRef = db.collection('users').doc(username);
+    const doc = await userRef.get();
+  
+    if (!doc.exists) {
+      return res.status(404).send('User not found');
+    }
+  
+    // Update the captors map
+    const userCaptors = doc.data().captors || {};
+    userCaptors[captor] = captorValue;
+  
+    await userRef.update({ captors: userCaptors });
+    res.status(200).send(`Captor '${captor}' updated for user: ${username}`);
 });
 
 // DELETE: Remove a captor from a user's captors map
