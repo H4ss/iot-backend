@@ -8,7 +8,7 @@ import userRoute from './routes/usersRoutes.js';
 const router = express.Router();
 const db = admin.firestore();
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 
 // config
 app.use(express.json());
