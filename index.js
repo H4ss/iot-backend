@@ -4,7 +4,9 @@ import firebaseApp from './firebase-config.js';
 import testRoute from './routes/testFirebaseAdmin.js';
 import admin from './firebaseAdmin.js';
 import userRoute from './routes/usersRoutes.js';
+import adminRoute from './routes/adminRoutes.js';
 import mqtt from 'mqtt';
+
 
 const router = express.Router();
 const db = admin.firestore();
@@ -92,6 +94,9 @@ app.use('/test-firebase', testRoute);
 
 // User routes
 app.use('/api/user', userRoute);
+
+//admin routes
+app.use('/api/admin', adminRoute);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
