@@ -9,24 +9,24 @@ router.get('/login', async (req, res) => {
     const { username, password } = req.query
 
     if (!username || !password) {
-        return res.status(400).send('Username and password are required');
+        return res.status(400).json('Username and password are required');
     }
 
     const userRef = db.collection('users').doc(username);
     const doc = await userRef.get();
 
     if (!doc.exists) {
-        return res.status(404).send('User not found');
+        return res.status(404).json('User not found');
     }
 
     const user = doc.data();
     if (user.password === password) {
         // Passwords match
         // TODO: Implement token generation or session creation as per your authentication strategy
-        res.status(200).send('Login successful');
+        res.status(200).json('Login successful');
     } else {
         // Passwords do not match
-        res.status(401).send('Invalid password');
+        res.status(401).json('Invalid password');
     }
 });
 
