@@ -115,6 +115,21 @@ router.put('/update-password/:username', async (req, res) => {
     res.status(200).send(`Password updated for user: ${username}`);
 });
 
+// DELETE: Delete a user account
+router.delete('/delete-user/:username', async (req, res) => {
+    const username = req.params.username;
+  
+    const userRef = db.collection('users').doc(username);
+    const doc = await userRef.get();
+  
+    if (!doc.exists) {
+      return res.status(404).send('User not found');
+    }
+  
+    await userRef.delete();
+    res.status(200).send(`User account '${username}' has been deleted`);
+});
+
 // PUT: Add a captor to a user's captors map
 router.put('/add-captor/:username', async (req, res) => {
     const username = req.params.username;
@@ -137,6 +152,50 @@ router.put('/add-captor/:username', async (req, res) => {
   
     await userRef.update({ captors: userCaptors });
     res.status(200).send(`Captor '${captorName}' added/updated for user: ${username}`);
+});
+
+function calculateAirQualityPercentage(rawValue) {
+    const minValue = 10000; // Worst air quality
+    const maxValue = 30000; // Best air quality
+
+    // Clamp rawValue between minValue and maxValue
+    rawValue = Math.max(minValue, Math.min(maxValue, rawValue));
+
+    // Normalize the value between 0 and 1, then convert to percentage
+    const normalized = (rawValue - minValue) / (maxValue - minValue);
+    return Math.round(normalized * 100);
+}
+
+function getAirQualityMessage(percentage, currentTime) {
+    const hour = parseInt(currentTime.split(':')[0]);
+
+    if (percentage > 90) {
+        return "Your air quality is excellent.";
+    } else if (percentage > 70) {
+        return "Your air quality is good.";
+    } else if (hour >= 18) {
+        return "Open your windows for the night.";
+    } else if (hour >= 6 && hour < 18) {
+        return "Leave some air go in for today.";
+    } else {
+        return "Air quality is poor.";
+    }
+}
+
+router.get('/air-quality', async (req, res) => {
+    // Replace this with actual data fetching mechanism
+    const airQualityDataTest = {"CO2": "16000", "time": "7:30:00"};
+    let airQualityData = axios.get("http://localhost:4000/captors_info").then((response) => { return response.data; });
+    
+
+    const rawCO2Value = parseInt(airQualityData.CO2);
+    const airQualityPercentage = calculateAirQualityPercentage(rawCO2Value);
+    const message = getAirQualityMessage(airQualityPercentage, airQualityData.time);
+
+    res.json({
+        percentage: airQualityPercentage,
+        message: message
+    });
 });
 
 // PUT: Update selected captors
@@ -193,21 +252,5 @@ router.delete('/delete-captor/:username', async (req, res) => {
       res.status(404).send(`Captor '${captorName}' not found for user: ${username}`);
     }
 });
-
-// DELETE: Delete a user account
-router.delete('/delete-user/:username', async (req, res) => {
-    const username = req.params.username;
-  
-    const userRef = db.collection('users').doc(username);
-    const doc = await userRef.get();
-  
-    if (!doc.exists) {
-      return res.status(404).send('User not found');
-    }
-  
-    await userRef.delete();
-    res.status(200).send(`User account '${username}' has been deleted`);
-});
-  
 
 export default router;
