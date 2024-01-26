@@ -88,7 +88,7 @@ router.put('/update-username/:oldUsername', async (req, res) => {
     const { newUsername } = req.body;
   
     if (!newUsername) {
-      return res.status(400).send('New username is required');
+      return res.status(400).json('New username is required');
     }
   
     const oldUserRef = db.collection('users').doc(oldUsername);
@@ -96,12 +96,12 @@ router.put('/update-username/:oldUsername', async (req, res) => {
   
     const newDoc = await newUserRef.get();
     if (newDoc.exists) {
-      return res.status(409).send('New username already exists');
+      return res.status(409).json('New username already exists');
     }
   
     const oldDoc = await oldUserRef.get();
     if (!oldDoc.exists) {
-      return res.status(404).send('Old user not found');
+      return res.status(404).json('Old user not found');
     }
   
     const userData = oldDoc.data();
@@ -110,7 +110,7 @@ router.put('/update-username/:oldUsername', async (req, res) => {
     await newUserRef.set(userData);
     await oldUserRef.delete();
   
-    res.status(200).send(`Username updated from ${oldUsername} to ${newUsername}`);
+    res.status(200).json(`Username updated from ${oldUsername} to ${newUsername}`);
 });
 
 // PUT: Update a user's password
@@ -119,7 +119,7 @@ router.put('/update-password/:username', async (req, res) => {
     const { oldPassword, newPassword } = req.body;
   
     if (!oldPassword || !newPassword) {
-      return res.status(400).send('Old and new passwords are required');
+      return res.status(400).json('Old and new passwords are required');
     }
   
     // TODO: Add password strength validation for newPassword here
@@ -128,16 +128,16 @@ router.put('/update-password/:username', async (req, res) => {
     const doc = await userRef.get();
   
     if (!doc.exists) {
-      return res.status(404).send('User not found');
+      return res.status(404).json('User not found');
     }
   
     const user = doc.data();
     if (user.password !== oldPassword) { // This is a simple check; we might need to do it hashed
-      return res.status(401).send('Old password is incorrect');
+      return res.status(401).json('Old password is incorrect');
     }
   
     await userRef.update({ password: newPassword });
-    res.status(200).send(`Password updated for user: ${username}`);
+    res.status(200).json(`Password updated for user: ${username}`);
 });
 
 // DELETE: Delete a user account
