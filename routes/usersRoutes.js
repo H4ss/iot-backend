@@ -5,6 +5,31 @@ import admin from '../firebaseAdmin.js';
 const router = express.Router();
 const db = admin.firestore();
 
+router.get('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).send('Username and password are required');
+    }
+
+    const userRef = db.collection('users').doc(username);
+    const doc = await userRef.get();
+
+    if (!doc.exists) {
+        return res.status(404).send('User not found');
+    }
+
+    const user = doc.data();
+    if (user.password === password) {
+        // Passwords match
+        // TODO: Implement token generation or session creation as per your authentication strategy
+        res.status(200).send('Login successful');
+    } else {
+        // Passwords do not match
+        res.status(401).send('Invalid password');
+    }
+});
+
 // POST: Create a new user
 router.post('/create-user', async (req, res) => {
   const { username, password } = req.body;
