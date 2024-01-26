@@ -6,7 +6,7 @@ const router = express.Router();
 const db = admin.firestore();
 
 router.get('/login', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password } = req.query
 
     if (!username || !password) {
         return res.status(400).send('Username and password are required');
