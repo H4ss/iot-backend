@@ -207,6 +207,13 @@ function getAirQualityMessage(percentage, currentTime) {
     }
 }
 
+router.get('/data-test', async (req, res) => {
+    res.json({
+        CO2: 28999,
+        time: "10:30:00"
+    });
+})
+
 router.get('/air-quality', async (req, res) => {
     // Replace this with actual data fetching mechanism
     const airQualityDataTest = {"CO2": "16000", "time": "7:30:00"};
