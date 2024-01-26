@@ -188,9 +188,9 @@ router.get('/air-quality', async (req, res) => {
     let airQualityData = axios.get("http://localhost:4000/captors_info").then((response) => { return response.data; });
     
 
-    const rawCO2Value = parseInt(airQualityData.CO2);
+    const rawCO2Value = parseInt(airQualityDataTest.CO2);
     const airQualityPercentage = calculateAirQualityPercentage(rawCO2Value);
-    const message = getAirQualityMessage(airQualityPercentage, airQualityData.time);
+    const message = getAirQualityMessage(airQualityPercentage, airQualityDataTest.time);
 
     res.json({
         percentage: airQualityPercentage,
