@@ -6,7 +6,7 @@ import admin from './firebaseAdmin.js';
 import userRoute from './routes/usersRoutes.js';
 import adminRoute from './routes/adminRoutes.js';
 import mqtt from 'mqtt';
-
+import cors from 'cors';
 
 const router = express.Router();
 const db = admin.firestore();
@@ -73,21 +73,12 @@ client_debug.on('error', function (err) {
     console.error('Subscriber Error:', err);
 });
 
-//general route for mqtt
-app.get('/captors_info', (req, res) => {
-    res.send(lastCaptorsValue);
-});
-
-//general route for mqtt
-app.get('/msgtestbroker', (req, res) => {
-    res.send(lastReceivedMessage);
-});
-
 // Broker mqtt end
 
 
 // config
 app.use(express.json());
+app.use(cors());
 
 // Testing routes
 app.use('/test-firebase', testRoute);
@@ -100,6 +91,16 @@ app.use('/api/admin', adminRoute);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
+});
+
+//general route for mqtt
+app.get('/captors_info', (req, res) => {
+    res.send(lastCaptorsValue);
+});
+
+//general route for mqtt
+app.get('/msgtestbroker', (req, res) => {
+    res.send(lastReceivedMessage);
 });
 
 

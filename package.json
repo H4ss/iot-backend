@@ -22,6 +22,7 @@
   "homepage": "https://github.com/H4ss/iot-backend#readme",
   "dependencies": {
     "axios": "^1.6.5",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.2",
     "express": "^4.18.2",
     "firebase": "^10.7.2",
