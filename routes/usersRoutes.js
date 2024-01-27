@@ -196,7 +196,7 @@ function getAirQualityMessage(percentage, currentTime) {
 
     if (percentage > 90) {
         return "Your air quality is excellent.";
-    } else if (percentage > 70) {
+    } else if (percentage > 50) {
         return "Your air quality is good.";
     } else if (hour >= 18) {
         return "Open your windows for the night.";
