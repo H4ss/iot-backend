@@ -217,7 +217,7 @@ router.get('/data-test', async (req, res) => {
 router.get('/air-quality', async (req, res) => {
     // Replace this with actual data fetching mechanism
     const airQualityDataTest = {"CO2": "16000", "time": "7:30:00"};
-    let airQualityData = axios.get("http://localhost:4000/captors_info").then((response) => { return response.data; });
+    let airQualityData = await axios.get("http://localhost:4000/captors_info").then((response) => { return response.data; });
     
 
     const rawCO2Value = parseInt(airQualityData.CO2);
