@@ -181,7 +181,7 @@ router.put('/add-captor/:username', async (req, res) => {
 
 function calculateAirQualityPercentage(rawValue) {
     const minValue = 10000; // Worst air quality
-    const maxValue = 30000; // Best air quality
+    const maxValue = 50000; // Best air quality
 
     // Clamp rawValue between minValue and maxValue
     rawValue = Math.max(minValue, Math.min(maxValue, rawValue));
